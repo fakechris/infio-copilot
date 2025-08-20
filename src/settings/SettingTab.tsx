@@ -18,6 +18,7 @@ import { findFilesMatchingPatterns } from '../utils/glob-utils';
 import BasicAutoCompleteSettings from './components/BasicAutoCompleteSettings';
 // import DangerZoneSettings from './components/DangerZoneSettings';
 import CustomProviderSettings from './components/ModelProviderSettings';
+import PluginInfoSettings from './components/PluginInfoSettings';
 import PostprocessingSettings from './components/PostprocessingSettings';
 import PreprocessingSettings from './components/PreprocessingSettings';
 import PrivacySettings from './components/PrivacySettings';
@@ -27,6 +28,7 @@ export class InfioSettingTab extends PluginSettingTab {
 	plugin: InfioPlugin;
 	private autoCompleteContainer: HTMLElement | null = null;
 	private modelsContainer: HTMLElement | null = null;
+	private pluginInfoContainer: HTMLElement | null = null;
 
 	constructor(app: App, plugin: InfioPlugin) {
 		super(app, plugin)
@@ -36,6 +38,7 @@ export class InfioSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this
 		containerEl.empty()
+		this.renderPluginInfoSection(containerEl)
 		this.renderModelsSection(containerEl)
 		this.renderModelParametersSection(containerEl)
 		this.renderFilesSearchSection(containerEl)
@@ -240,6 +243,12 @@ export class InfioSettingTab extends PluginSettingTab {
 						});
 					}),
 			);
+	}
+
+	renderPluginInfoSection(containerEl: HTMLElement): void {
+		const pluginInfoDiv = containerEl.createDiv("plugin-info-section");
+		this.pluginInfoContainer = pluginInfoDiv;
+		this.renderPluginInfoContent(pluginInfoDiv);
 	}
 
 	renderModelsSection(containerEl: HTMLElement): void {
@@ -723,6 +732,22 @@ export class InfioSettingTab extends PluginSettingTab {
 		// 		/>
 		// 	);
 		// }
+	}
+
+	private renderPluginInfoContent(containerEl: HTMLElement): void {
+		const div = containerEl.createDiv("div");
+		const root = createRoot(div);
+		root.render(
+			<PluginInfoSettings
+				pluginVersion={this.plugin.manifest.version}
+				// pluginName={this.plugin.manifest.name}
+				author={this.plugin.manifest.author}
+				authorUrl={this.plugin.manifest.authorUrl}
+				// description={this.plugin.manifest.description}
+				plugin={this.plugin}
+				settings={this.plugin.settings}
+			/>
+		);
 	}
 
 	private renderComponent(containerEl: HTMLElement, component: React.ReactNode) {

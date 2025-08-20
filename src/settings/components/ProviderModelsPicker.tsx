@@ -343,13 +343,31 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 								</svg>
 							</button>
 						</Popover.Trigger>
-						<Popover.Content
-							side="bottom"
-							align="start"
-							sideOffset={4}
-							className="infio-llm-setting-combobox-dropdown"
-						>
-							<div ref={listRef}>
+						<Popover.Portal>
+							<Popover.Content
+								side="bottom"
+								align="start"
+								sideOffset={4}
+								className="infio-model-picker-dropdown"
+								avoidCollisions={true}
+								collisionPadding={8}
+								onOpenAutoFocus={(e) => {
+									e.preventDefault();
+									// 延迟聚焦到搜索输入框
+									setTimeout(() => {
+										const input = e.currentTarget.querySelector('input');
+										input?.focus();
+									}, 0);
+								}}
+								onCloseAutoFocus={(e) => e.preventDefault()}
+							>
+							<div 
+								ref={listRef}
+								onMouseDown={(e) => {
+									// 防止点击内容区域时关闭 Popover
+									e.stopPropagation();
+								}}
+							>
 								<div className="infio-llm-setting-search-container">
 									<input
 										type="text"
@@ -359,6 +377,14 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 										onChange={(e) => {
 											setSearchTerm(e.target.value);
 											setSelectedIndex(0);
+										}}
+										onMouseDown={(e) => {
+											// 防止点击输入框时关闭 Popover
+											e.stopPropagation();
+										}}
+										onFocus={(e) => {
+											// 防止聚焦时关闭 Popover
+											e.stopPropagation();
 										}}
 										onKeyDown={(e) => {
 											switch (e.key) {
@@ -399,25 +425,28 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 								{filteredOptions.length > 0 ? (
 									<div className="infio-llm-setting-options-list">
 										{filteredOptions.map((option, index) => (
-											<Popover.Close key={option.id} asChild>
-												<div
-													ref={(el) => (itemRefs.current[index] = el)}
-													onMouseEnter={() => setSelectedIndex(index)}
-													onClick={() => {
-														handleModelSelect(modelProvider, option.id, option.isCustom);
-														setSearchTerm("");
-														setIsOpen(false);
-													}}
-													className={`infio-llm-setting-combobox-option ${index === selectedIndex ? 'is-selected' : ''}`}
-												>
-													<HighlightedText segments={option.html} />
-												</div>
-											</Popover.Close>
+											<div
+												key={option.id}
+												ref={(el) => (itemRefs.current[index] = el)}
+												onMouseEnter={() => setSelectedIndex(index)}
+												onMouseDown={(e) => {
+													// 防止事件冒泡
+													e.preventDefault();
+													e.stopPropagation();
+													handleModelSelect(modelProvider, option.id, option.isCustom);
+													setSearchTerm("");
+													setIsOpen(false);
+												}}
+												className={`infio-llm-setting-combobox-option ${index === selectedIndex ? 'is-selected' : ''}`}
+											>
+												<HighlightedText segments={option.html} />
+											</div>
 										))}
 									</div>
 								) : null}
 							</div>
-						</Popover.Content>
+							</Popover.Content>
+						</Popover.Portal>
 					</Popover.Root>
 				</div>
 			</div>
@@ -457,6 +486,7 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 					display: flex;
 					align-items: center;
 					gap: 12px;
+					position: relative;
 				}
 
 				.infio-llm-setting-provider-label,
@@ -545,15 +575,30 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 					transform: rotate(180deg);
 				}
 
-				.infio-llm-setting-combobox-dropdown {
+				.infio-model-picker-dropdown {
 					background: var(--background-primary);
 					border: 1px solid var(--background-modifier-border);
 					border-radius: 6px;
-					box-shadow: var(--shadow-s);
+					box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 					padding: 6px;
 					min-width: 300px;
 					max-width: 500px;
-					z-index: 1000;
+					z-index: 10000;
+					max-height: 300px;
+					overflow: hidden;
+					transform-origin: var(--radix-popover-content-transform-origin);
+					animation: popover-in 0.15s ease-out;
+				}
+
+				@keyframes popover-in {
+					from {
+						opacity: 0;
+						transform: scale(0.95) translateY(-5px);
+					}
+					to {
+						opacity: 1;
+						transform: scale(1) translateY(0);
+					}
 				}
 
 				.infio-llm-setting-search-container {
@@ -578,8 +623,9 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 				}
 
 				.infio-llm-setting-options-list {
-					max-height: 200px;
+					max-height: 240px;
 					overflow-y: auto;
+					overscroll-behavior: contain;
 				}
 
 				.infio-llm-setting-combobox-option {

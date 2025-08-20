@@ -1,4 +1,7 @@
 releases:
+  - version: "0.8.0"
+    features:
+      - "add infio pro"
   - version: "0.7.6"
     features:
       - "update mcp settings file watcher"
