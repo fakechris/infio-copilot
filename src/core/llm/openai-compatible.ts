@@ -83,7 +83,7 @@ export class OpenAICompatibleProvider implements BaseLLMProvider {
       )
     }
 
-    const extraParams = this.getExtraParams(false) // 非流式调用
+    const extraParams = this.getExtraParams(false, model.modelId) // 非流式调用
     return this.adapter.generateResponse(this.client as OpenAI, request, options, extraParams)
   }
 

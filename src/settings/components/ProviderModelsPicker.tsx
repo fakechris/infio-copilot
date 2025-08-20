@@ -355,6 +355,7 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
 									e.preventDefault();
 									// 延迟聚焦到搜索输入框
 									setTimeout(() => {
+										// @ts-expect-error - currentTarget is HTMLElement
 										const input = e.currentTarget.querySelector('input');
 										input?.focus();
 									}, 0);
