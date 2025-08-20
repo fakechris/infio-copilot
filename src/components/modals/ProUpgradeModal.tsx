@@ -7,7 +7,7 @@ interface ProUpgradeModalContentProps {
 
 const ProUpgradeModalContent: React.FC<ProUpgradeModalContentProps> = ({ onClose }) => {
   const handleUpgradeClick = () => {
-    window.open('https://platform.infio.com/billing', '_blank')
+    window.open('https://platform.infio.app/billing', '_blank')
   }
 
   return (

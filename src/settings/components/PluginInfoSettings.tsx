@@ -48,6 +48,7 @@ export default function PluginInfoSettings({
 		try {
 			// 检查是否为Pro用户
 			const userPlan = await fetchUserPlan(settings.infioProvider.apiKey);
+			console.log('userPlan', userPlan);
 			const isProUser = userPlan.plan?.toLowerCase().startsWith('pro') || false;
 			if (!isProUser) {
 				if (plugin?.app) {

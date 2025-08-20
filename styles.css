@@ -64,6 +64,10 @@
 
 /*
  * Chat
+ *
+ * 修复了样式冲突问题：
+ * - 限制了 #infio-apply-view 中编辑器样式的作用域，防止影响到聊天消息
+ * - 移除了内联样式，改用 CSS 类
  */
 .infio-chat-header {
   display: flex;
@@ -130,26 +134,92 @@
 .infio-chat-messages {
   flex-grow: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   user-select: text;
   display: flex;
   flex-direction: column;
-  gap: var(--size-4-1);
+  gap: var(--size-2-1);
   padding: 0 var(--size-4-3) var(--size-4-5) var(--size-4-3);
   margin: var(--size-4-2) calc(var(--size-4-3) * -1) 0;
+  /* 确保内容不会超出容器 */
+  min-width: 0;
 
   .infio-chat-messages-user {
-		margin-top: 12px;
-		margin-bottom: 12px;
+		margin-top: 1px;
+		margin-bottom: 1px;
     display: flex;
     flex-direction: column;
-    gap: var(--size-4-1);
+    gap: var(--size-2-1);
+    /* 防止用户消息超出容器 */
+    min-width: 0;
+    max-width: 100%;
   }
 
   .infio-chat-messages-assistant {
 		display: flex;
     flex-direction: column;
-    /* padding-bottom: var(--size-4-2); */
+    /* 防止助手消息超出容器 */
+    min-width: 0;
+    max-width: 100%;
   }
+}
+
+/*
+ * Starred Commands Display
+ * - Quick access to starred commands above the input
+ */
+.infio-starred-commands {
+  border: none !important;
+	margin-bottom: var(--size-4-2);
+}
+
+.infio-starred-commands-title {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+  margin-bottom: var(--size-4-2);
+}
+
+.infio-starred-commands-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2-2);
+}
+
+.infio-starred-command-item {
+  display: flex;
+  align-items: center;
+	justify-content: center;
+
+  padding: 1px 8px;
+  background-color: rgba(86, 72, 29, 0.3) !important;
+  border: none !important;
+	box-shadow: none !important;
+  border-radius: var(--radius-l);
+  font-size: var(--font-ui-small);
+  color: #f1c43f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.infio-starred-command-item:hover {
+  background-color: rgba(115, 90, 14, 0.4) !important;
+  color: #f1c43f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.infio-starred-command-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /*
@@ -256,6 +326,223 @@
   }
 }
 
+/*
+ * Optimized Table Styles for RawMarkdownBlock
+ * - Responsive table container with horizontal scrolling
+ * - Improved styling with proper spacing and borders
+ * - Dark mode support
+ */
+
+.infio-markdown-table-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin: var(--size-4-2) 0;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+}
+
+.infio-markdown-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-ui-small);
+  line-height: 1.4;
+  min-width: 100%;
+}
+
+.infio-markdown-table-head {
+  background: var(--background-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.infio-markdown-table-header {
+  padding: var(--size-2-2) var(--size-4-2);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-normal);
+  border-bottom: 2px solid var(--background-modifier-border);
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.infio-markdown-table-header:first-child {
+  border-top-left-radius: var(--radius-s);
+}
+
+.infio-markdown-table-header:last-child {
+  border-top-right-radius: var(--radius-s);
+}
+
+.infio-markdown-table-body {
+  background: var(--background-primary);
+}
+
+.infio-markdown-table-row {
+  transition: background-color 0.1s ease;
+}
+
+.infio-markdown-table-row:hover {
+  background: var(--background-modifier-hover);
+}
+
+.infio-markdown-table-row:nth-child(even) {
+  background: var(--background-secondary-alt);
+}
+
+.infio-markdown-table-row:nth-child(even):hover {
+  background: var(--background-modifier-hover);
+}
+
+.infio-markdown-table-cell {
+  padding: var(--size-2-2) var(--size-4-2);
+  border-bottom: 1px solid var(--background-modifier-border-hover);
+  color: var(--text-normal);
+  vertical-align: top;
+  word-wrap: break-word;
+  max-width: 300px;
+}
+
+.infio-markdown-table-cell:empty::before {
+  content: '-';
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Last row styling */
+.infio-markdown-table-row:last-child .infio-markdown-table-cell {
+  border-bottom: none;
+}
+
+.infio-markdown-table-row:last-child .infio-markdown-table-cell:first-child {
+  border-bottom-left-radius: var(--radius-s);
+}
+
+.infio-markdown-table-row:last-child .infio-markdown-table-cell:last-child {
+  border-bottom-right-radius: var(--radius-s);
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+  .infio-markdown-table-container {
+    margin: var(--size-4-2) calc(var(--size-4-2) * -1);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .infio-markdown-table {
+    font-size: var(--font-ui-smaller);
+  }
+
+  .infio-markdown-table-header,
+  .infio-markdown-table-cell {
+    padding: var(--size-2-1) var(--size-4-1);
+    min-width: 80px;
+  }
+}
+
+/* Dark mode specific enhancements */
+.theme-dark .infio-markdown-table-container {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .infio-markdown-table-row:nth-child(even) {
+  background: var(--background-primary-alt);
+}
+
+/* Link styling within markdown tables */
+.infio-markdown-link {
+  color: var(--text-accent);
+  text-decoration: none;
+  transition: color 0.1s ease;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.infio-markdown-link:hover {
+  color: var(--text-accent-hover);
+  text-decoration: underline;
+}
+
+/* Internal file link styling */
+.infio-markdown-link--internal {
+  color: var(--text-accent);
+}
+
+.infio-markdown-link--internal:hover {
+  color: var(--text-accent-hover);
+  background-color: var(--background-modifier-hover);
+  border-radius: 3px;
+  padding: 1px 3px;
+  margin: -1px -3px;
+}
+
+/* External link styling */
+.infio-markdown-link--external {
+  color: var(--text-accent);
+}
+
+/* Inline code styling within tables */
+.infio-markdown-table-cell code {
+  background: var(--background-modifier-border);
+  padding: 0.125rem 0.25rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.875em;
+  font-family: var(--font-monospace);
+  color: var(--text-normal);
+  word-break: break-word;
+}
+
+.theme-dark .infio-markdown-table-cell code {
+  background: var(--background-modifier-border-hover);
+}
+
+/* Table content text wrapping */
+.infio-markdown-table-cell p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.infio-markdown-table-cell p + p {
+  margin-top: var(--size-2-1);
+}
+
+/* Table content lists */
+.infio-markdown-table-cell ul,
+.infio-markdown-table-cell ol {
+  margin: 0;
+  padding-left: var(--size-4-2);
+}
+
+.infio-markdown-table-cell li {
+  margin-bottom: 0.125rem;
+}
+
+/* Improve table scrolling indicator */
+.infio-markdown-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.infio-markdown-table-container::-webkit-scrollbar-track {
+  background: var(--background-modifier-border);
+  border-radius: var(--radius-s);
+}
+
+.infio-markdown-table-container::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border-hover);
+  border-radius: var(--radius-s);
+}
+
+.infio-markdown-table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+
 /* 为后续问题添加特殊样式 */
 .infio-markdown.infio-followup-question {
 	margin-top: 8px;
@@ -301,7 +588,7 @@ button:not(.clickable-icon).infio-chat-list-dropdown {
   font-size: var(--font-ui-medium);
   outline: none;
   min-height: 80px;
-  max-height: 200px;
+  max-height: 800px;
   overflow-y: auto;
   font-size: var(--font-ui-medium);
   padding: var(--size-2-1);
@@ -472,7 +759,7 @@ button:not(.clickable-icon).infio-chat-list-dropdown {
   background-color: var(--background-primary);
   border-radius: var(--radius-s);
   border: 1px solid var(--background-modifier-border);
-  max-height: 350px;
+  max-height: 800px;
   overflow-y: auto;
   white-space: pre-line;
 
@@ -693,23 +980,33 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   position: relative;
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
-	margin-top: 12px;
-	margin-bottom: 12px;
-}
-
-.infio-chat-code-block.infio-reasoning-block {
-  max-height: 200px;
+  /* 防止代码块内容溢出 */
   overflow: hidden;
-}
-
-.infio-reasoning-content-wrapper {
-  height: calc(100% - 28px);
-  overflow-y: auto;
-  scroll-behavior: smooth;
+  word-wrap: break-word;
 }
 
 .infio-chat-code-block code {
   padding: 0;
+}
+
+.infio-reasoning-content-wrapper {
+  /* Height restrictions removed to show full content */
+  /* 防止推理内容溢出 */
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/* 折叠/展开功能相关样式 */
+.infio-reasoning-content-wrapper.collapsed {
+  max-height: 150px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.infio-reasoning-content-wrapper.expanded {
+  max-height: none;
+  overflow-y: visible;
+  transition: max-height 0.3s ease-in-out;
 }
 
 .infio-chat-code-block-header {
@@ -717,7 +1014,8 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   justify-content: space-between;
   align-items: center;
   font-size: var(--font-smallest);
-  padding: 0 var(--size-4-1) 0 0;
+  padding: 0;
+	margin: 0;
 }
 
 .infio-chat-code-block:hover .infio-chat-code-block-header {
@@ -754,6 +1052,7 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
 
 .infio-chat-code-block-header-icon {
   margin-right: 6px;
+  flex-shrink: 0;
 }
 
 .infio-chat-code-block-header-button {
@@ -772,6 +1071,7 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   overflow: hidden;
   min-width: fit-content;
   height: 100%;
+  padding-right: var(--size-4-1);
 }
 
 .infio-chat-code-block.has-filename
@@ -805,6 +1105,378 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   margin: 0;
 }
 
+/* Read File Block - Minimal styling for better integration */
+.infio-read-file-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-read-file-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-read-file-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Tool Result Block - Minimal styling for better integration */
+.infio-tool-result-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-tool-result-block .infio-chat-code-block-response-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-tool-result-block .infio-chat-code-block-response-header-filename {
+  color: var(--text-muted) !important;
+}
+
+.infio-tool-result-block .infio-mcp-tool-server-name {
+  color: var(--text-muted) !important;
+}
+
+.infio-tool-result-block .infio-chat-code-block-response-header-filename {
+  transition: all 0.2s ease;
+}
+
+.infio-tool-result-block .infio-chat-code-block-response-header-filename:hover {
+  opacity: 0.7;
+}
+
+/* Plan Block - Minimal styling for better integration */
+.infio-plan-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-plan-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-plan-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+  transition: all 0.2s ease;
+}
+
+.infio-plan-block .infio-chat-code-block-header-filename:hover {
+  opacity: 0.7;
+}
+
+/* Reasoning Content Block - Unified styling for both loading and completed states */
+.infio-reasoning-content-block {
+  color: var(--text-muted) !important;
+  border: 1px solid var(--background-modifier-border) !important;
+  background: var(--background-secondary) !important;
+  border-radius: var(--radius-s) !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.infio-reasoning-content-block .infio-chat-code-block-header {
+  background-color: var(--background-secondary) !important;
+  border-bottom: 1px solid var(--background-modifier-border) !important;
+}
+
+.infio-reasoning-content-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+  transition: all 0.2s ease;
+}
+
+.infio-reasoning-content-block .infio-chat-code-block-header-filename:hover {
+  opacity: 0.7;
+}
+
+.infio-reasoning-markdown-wrapper {
+  padding: var(--size-4-2);
+  line-height: 1.5;
+  max-height: 500px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.infio-reasoning-markdown {
+  font-size: var(--font-ui-medium);
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown h1, 
+.infio-reasoning-markdown h2, 
+.infio-reasoning-markdown h3, 
+.infio-reasoning-markdown h4, 
+.infio-reasoning-markdown h5, 
+.infio-reasoning-markdown h6 {
+  font-size: var(--font-ui-large);
+  margin-top: var(--size-4-3);
+  margin-bottom: var(--size-4-2);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown p {
+  margin-bottom: var(--size-4-2);
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown ul, 
+.infio-reasoning-markdown ol {
+  margin-bottom: var(--size-4-2);
+  padding-left: var(--size-4-4);
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown li {
+  margin-bottom: var(--size-2-1);
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown code {
+  background-color: var(--background-modifier-border);
+  padding: var(--size-2-1) var(--size-4-1);
+  border-radius: var(--radius-s);
+  font-size: var(--font-ui-small);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown pre {
+  background-color: var(--background-modifier-border);
+  padding: var(--size-4-2);
+  border-radius: var(--radius-s);
+  overflow-x: auto;
+  margin-bottom: var(--size-4-2);
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown pre code {
+  background-color: transparent;
+  padding: 0;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.infio-reasoning-markdown a {
+  color: var(--text-muted);
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.infio-reasoning-markdown strong {
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: bold;
+}
+
+.infio-reasoning-markdown em {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.infio-reasoning-markdown blockquote {
+  color: var(--text-muted);
+  font-style: italic;
+  border-left: 3px solid var(--background-modifier-border);
+  padding-left: var(--size-4-2);
+  margin: var(--size-4-2) 0;
+}
+
+.infio-reasoning-markdown table {
+  color: var(--text-muted);
+  font-style: italic;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: var(--size-4-2);
+}
+
+.infio-reasoning-markdown th,
+.infio-reasoning-markdown td {
+  color: var(--text-muted);
+  font-style: italic;
+  border: 1px solid var(--background-modifier-border);
+  padding: var(--size-2-1) var(--size-4-1);
+  text-align: left;
+}
+
+.infio-reasoning-markdown hr {
+  border: none;
+  height: 1px;
+  background-color: var(--background-modifier-border);
+  margin: var(--size-4-3) 0;
+}
+
+/* List Files Block - Minimal styling for better integration */
+.infio-list-files-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-list-files-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-list-files-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Manage Files Block - Minimal styling for better integration */
+.infio-manage-files-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-manage-files-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-manage-files-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Match Search Files Block - Minimal styling for better integration */
+.infio-match-search-files-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-match-search-files-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-match-search-files-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Regex Search Files Block - Minimal styling for better integration */
+.infio-regex-search-files-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-regex-search-files-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-regex-search-files-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Search Web Block - Minimal styling for better integration */
+.infio-search-web-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-search-web-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-search-web-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Semantic Search Files Block - Minimal styling for better integration */
+.infio-semantic-search-files-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-semantic-search-files-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-semantic-search-files-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Transformation Tool Block - Minimal styling for better integration */
+.infio-transformation-tool-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-transformation-tool-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-transformation-tool-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+}
+
+/* Dataview Query Block - Minimal styling for better integration */
+.infio-dataview-query-block {
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  color: var(--text-muted) !important;
+}
+
+.infio-dataview-query-block .infio-chat-code-block-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.infio-dataview-query-block .infio-chat-code-block-header-filename {
+  color: var(--text-muted) !important;
+  transition: all 0.2s ease;
+}
+
+.infio-dataview-query-block .infio-chat-code-block-header-filename:hover {
+  opacity: 0.7;
+}
+
 /*
  * Lexical Content Editable
  * - Styles for the content editable area
@@ -812,8 +1484,10 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
 
 .infio-chat-lexical-content-editable-root {
   min-height: 62px;
-  max-height: 500px;
+  max-height: 800px;
   overflow-y: auto;
+  overflow-x: hidden;
+
 }
 
 .infio-chat-lexical-content-editable-root .mention {
@@ -832,17 +1506,24 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   min-height: 36px;
   max-height: 500px;
   overflow-y: auto;
+  overflow-x: hidden;
+  /* 确保编辑器不会影响外部滚动 */
+  contain: size style;
 }
 
 .infio-search-lexical-content-editable-root .mention {
   background-color: var(--tag-background);
   color: var(--tag-color);
-  padding: var(--size-2-1) calc(var(--size-2-1));
-  border-radius: var(--radius-s);
-  background-color: var(--tag-background);
-  color: var(--tag-color);
   padding: 0 calc(var(--size-2-1));
   border-radius: var(--radius-s);
+  word-break: break-all;
+}
+
+.infio-chat-lexical-content-editable-root .command {
+  background-color: rgba(115, 90, 14, 0.3); /* 黄色背景 */
+  color: #f1c43f; /* 深黄色文字 */
+  padding: var(--size-2-1) calc(var(--size-2-1));
+  border-radius: var(--radius-m);
   word-break: break-all;
 }
 
@@ -965,12 +1646,14 @@ input[type='text'].infio-chat-list-dropdown-item-title-input {
   }
 }
 
-.infio-chat-template-menu-item {
+.infio-command-text {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--size-4-1);
-  width: 100%;
+  gap: 6px;
+}
+
+.infio-command-popover {
+  position: fixed;
 }
 
 .infio-chat-message-actions {
@@ -1805,7 +2488,42 @@ select.infio-ai-block-model-select::-ms-expand {
 #infio-apply-view {
   height: 100%;
   font-family: var(--font-interface);
+  /* 确保ApplyView不会影响外部滚动 */
+  contain: layout style;
 
+  /* 限制作用域：只应用于 ApplyView 内部的编辑器元素 */
+  > .view-content .cm-editor {
+    flex: 1 1 0;
+    min-height: 0;
+    position: relative !important;
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  > .view-content .cm-scroller {
+    padding: var(--file-margins);
+    display: flex !important;
+    align-items: flex-start !important;
+    line-height: 1.4;
+    height: 100%;
+    overflow-x: auto;
+    position: relative;
+    z-index: 0;
+  }
+
+  > .view-content .cm-sizer {
+    max-width: var(--file-line-width);
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: 488px;
+  }
+
+  /* 确保 diff 相关样式也限制作用域 */
   .infio-diff-line {
     white-space: pre-wrap;
     word-break: break-word;
@@ -1824,7 +2542,7 @@ select.infio-ai-block-model-select::-ms-expand {
     background-color: rgba(var(--color-red-rgb), 0.2);
   }
 
-  .view-content {
+  > .view-content {
     padding: 0;
   }
 
@@ -1832,37 +2550,6 @@ select.infio-ai-block-model-select::-ms-expand {
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .cm-editor {
-    flex: 1 1 0;
-    min-height: 0;
-    position: relative !important;
-    box-sizing: border-box;
-    display: flex !important;
-    flex-direction: column;
-  }
-
-  .cm-scroller {
-    padding: var(--file-margins);
-    display: flex !important;
-    align-items: flex-start !important;
-    line-height: 1.4;
-    height: 100%;
-    overflow-x: auto;
-    position: relative;
-    z-index: 0;
-  }
-
-  .cm-sizer {
-    max-width: var(--file-line-width);
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding-bottom: 488px;
   }
 
   .view-header {
@@ -2061,6 +2748,23 @@ button.infio-chat-input-model-select {
   width: 100%;
 }
 
+.infio-chat-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+}
+
+.infio-loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--background-modifier-border);
+  border-top: 2px solid var(--text-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 .infio-chat-code-block-url-list {
   list-style: none;
   padding: 0;
@@ -2231,8 +2935,6 @@ button.infio-chat-input-model-select {
 }
 
 .infio-commands-header {
-  padding-bottom: var(--size-4-2);
-  border-bottom: 1px solid var(--background-modifier-border);
   margin-bottom: var(--size-4-2);
 }
 
@@ -2264,14 +2966,15 @@ button.infio-chat-input-model-select {
 
 .infio-commands-input {
   background-color: var(--background-primary) !important;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
+  border: none !important;
+  border-radius: var(--radius-s) !important;
   color: var(--text-normal);
-  padding: var(--size-4-2);
+  padding: var(--size-2-2);
+	margin-bottom: var(--size-2-2);
   font-size: var(--font-ui-small);
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: var(--size-4-2);
+  height: 36px;
 }
 
 .infio-commands-textarea {
@@ -2376,10 +3079,12 @@ button.infio-chat-input-model-select {
 
 .infio-commands-name {
   font-weight: var(--font-medium);
-  margin-bottom: var(--size-2-3);
   font-size: var(--font-ui-medium);
-  color: var(--text-accent);
-	user-select: text;
+  color: #f1c43f;
+  user-select: text;
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
 }
 
 .infio-commands-content {
@@ -2430,6 +3135,9 @@ button.infio-chat-input-model-select {
 }
 
 .infio-commands-edit-name {
+  display: flex;
+  align-items: center;
+  justify-content: center !important;
   background-color: var(--background-primary) !important;
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
@@ -2438,6 +3146,8 @@ button.infio-chat-input-model-select {
   font-size: var(--font-ui-medium);
   font-weight: var(--font-medium);
   width: 100%;
+  height: 36px;
+  box-sizing: border-box;
 }
 
 .infio-commands-view-mode {
@@ -2454,7 +3164,115 @@ button.infio-chat-input-model-select {
 .infio-commands-form-group {
   display: flex;
   flex-direction: column;
+}
+
+.infio-commands-form-row {
+  display: flex;
+  gap: var(--size-4-2);
+  align-items: flex-end;
+}
+
+.infio-commands-form-row .infio-commands-label {
+  margin-bottom: var(--size-2-1);
+}
+
+.infio-commands-form-row .infio-commands-icon-group {
+  flex-shrink: 0;
+  width: auto;
+}
+
+.infio-commands-form-row .infio-commands-form-group:not(.infio-commands-icon-group) {
+  flex: 1;
+}
+
+.infio-commands-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--size-2-3);
+}
+
+.infio-commands-market-name {
+  font-weight: var(--font-medium);
+  font-size: var(--font-ui-medium);
+  color: var(--text-accent);
+  display: flex;
+  align-items: center;
   gap: var(--size-2-2);
+}
+
+/* Icon Selector Styles */
+.infio-icon-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.infio-icon-selector-button {
+  display: flex;
+  align-items: center;
+	justify-content: center;
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	color: var(--text-muted) !important;
+	padding: 0 !important;
+	margin: 0 !important;
+  gap: var(--size-2-1);
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 36px !important;
+  height: 36px !important;
+	border-radius: var(--radius-s) !important;
+  justify-content: center !important;
+
+	&:hover {
+		background-color: var(--background-modifier-hover) !important;
+	}
+}
+
+.infio-icon-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: var(--size-2-1);
+  max-height: 320px;
+  overflow-y: auto;
+  min-width: 280px;
+}
+
+.infio-icon-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: var(--size-2-1);
+  padding: var(--size-4-3) var(--size-4-2);
+}
+
+.infio-icon-selector-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	color: var(--text-muted) !important;
+	padding: 0 !important;
+	margin: 0 !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+	&:hover {
+		background-color: var(--background-modifier-hover) !important;
+	}
+
+	&.selected {
+		background-color: var(--interactive-accent) !important;
+		color: var(--text-on-accent) !important;
+	}
 }
 
 .infio-commands-section {
@@ -2599,6 +3417,152 @@ button.infio-chat-input-model-select {
   max-height: 80vh;
 }
 
+/* 聊天初始化加载动画 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/*
+ * KaTeX 数学公式样式
+ * - 确保 KaTeX 数学公式的正确渲染
+ * - 隐藏 HTML 部分，只显示 MathML 部分
+ */
+.infio-markdown .katex .katex-html {
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  border: 0 !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+}
+
+.infio-markdown .katex .katex-mathml {
+  display: inline !important;
+  clip: auto !important;
+  border: inherit !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding: inherit !important;
+  position: static !important;
+  width: auto !important;
+  white-space: inherit !important;
+}
+
+/* 确保 KaTeX 数学公式在复制时能正确处理 */
+.infio-markdown .katex {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.infio-markdown .katex-display {
+  display: block !important;
+  text-align: center;
+  margin: 0.5em 0;
+}
+
+.infio-markdown .katex-display .katex {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* 确保 KaTeX 样式不会影响到其他元素的滚动行为 */
+.infio-markdown .katex,
+.infio-markdown .katex-display {
+  overflow: visible !important;
+}
+
+.infio-markdown .katex * {
+  overflow: visible !important;
+}
+
+/* Apply button styles */
+.infio-apply-button-primary {
+  background-color: var(--color-green) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  height: 20px !important;
+  min-width: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.infio-apply-button-secondary {
+  background-color: var(--background-modifier-border) !important;
+  color: var(--text-normal) !important;
+  border: none !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  height: 20px !important;
+  min-width: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.infio-apply-button-applying {
+  background-color: var(--background-modifier-border) !important;
+  color: var(--text-muted) !important;
+  border: none !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  cursor: not-allowed !important;
+  font-size: 11px !important;
+  height: 20px !important;
+  min-width: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.infio-apply-status-icon {
+  margin-left: 8px !important;
+}
+
+.infio-applying-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+	margin-top: 4px !important;
+	height: 20px !important;
+  min-width: 40px !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--text-normal) !important;
+  font-size: 11px !important;
+}
+
+/* 覆盖标题栏按钮的默认高度设置 */
+.infio-chat-code-block.has-filename .infio-chat-code-block-header-button .infio-apply-button-primary,
+.infio-chat-code-block.has-filename .infio-chat-code-block-header-button .infio-apply-button-secondary,
+.infio-chat-code-block.has-filename .infio-chat-code-block-header-button .infio-apply-button-applying {
+  height: 20px !important;
+  margin: 4px 0 !important;
+}
+
+/* 确保复制按钮也有相同的高度限制 */
+.infio-chat-code-block.has-filename .infio-chat-code-block-header-button button:not(.infio-apply-button-primary):not(.infio-apply-button-secondary):not(.infio-apply-button-applying) {
+  height: 20px !important;
+  margin: 4px 0 !important;
+  padding: 0 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
 /*
  * JSON View Styles
  */
@@ -2615,4 +3579,323 @@ button.infio-chat-input-model-select {
 
 .cm-gutterElement.cm-activeLineGutter {
 	background-color: transparent;
+}
+
+/* Search Web Button Styles */
+.infio-search-web-button {
+	color: #008000 !important;
+}
+
+/*
+ * RawMarkdownBlock Action Buttons
+ * - Hover to show copy and create file buttons
+ * - Positioned at bottom right corner
+ * - Non-intrusive and doesn't affect layout
+ */
+
+.infio-markdown-container-with-actions {
+	position: relative;
+	&:hover {
+		background-color: var(--background-modifier-hover);
+	}
+}
+
+.infio-markdown-actions {
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	display: flex;
+	gap: 4px;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+	padding: 0px;
+	z-index: 10;
+	button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+    padding: 0;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--text-faint);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--background-modifier-hover);
+    }
+  }
+
+  .infio-chat-message-actions-icon--copied {
+    color: var(--text-muted);
+  }
+}
+
+.infio-markdown-container-with-actions:hover .infio-markdown-actions {
+	opacity: 1;
+	visibility: visible;
+}
+
+.infio-markdown-action-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all 0.2s ease-in-out;
+	padding: 0;
+}
+
+.infio-markdown-action-button:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	transform: scale(1.1);
+}
+
+.infio-markdown-action-button:active {
+	transform: scale(0.95);
+}
+
+.infio-markdown-create-button {
+	color: #008000;
+}
+
+.infio-markdown-create-button:hover {
+	background: rgba(0, 128, 0, 0.1);
+	color: #008000;
+}
+
+/* Commands View Tabs Styles */
+.infio-commands-tabs {
+  display: flex;
+  gap: 0;
+	border: none;
+  margin-bottom: var(--size-4-3);
+  border-bottom: 1px solid var(--background-modifier-border);
+  position: relative;
+  width: 100%;
+}
+
+.infio-commands-tab-button {
+  border: none;
+  padding: 16px 24px;
+  cursor: pointer;
+  color: var(--text-normal) !important;
+  background-color: transparent !important;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  border-bottom: 2px solid transparent;
+  flex: 1;
+  text-align: center;
+}
+
+.infio-commands-tab-button.active {
+  border-bottom: 2px solid var(--interactive-accent);
+}
+
+.infio-commands-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+}
+
+/* Commands Create Section Collapsible Styles */
+.infio-commands-create-section {
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  margin-bottom: 16px;
+}
+
+.infio-commands-create-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.infio-commands-create-item-header:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+.infio-commands-create-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.infio-commands-hub-expander {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.infio-commands-create-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.infio-commands-create-expanded {
+  border-top: 1px solid var(--background-modifier-border);
+  background-color: var(--background-secondary);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: expandContent 0.3s ease-out;
+  border-bottom-left-radius: var(--radius-s);
+  border-bottom-right-radius: var(--radius-s);
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Market Commands Styles */
+.infio-commands-market-item {
+  background-color: var(--background-primary);
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2);
+  box-shadow: var(--shadow-s);
+  border: 1px solid var(--background-modifier-border);
+  transition: all 0.2s ease;
+}
+
+.infio-commands-market-item:hover {
+  box-shadow: var(--shadow-l);
+  border-color: var(--background-modifier-border-hover);
+}
+
+.infio-commands-market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--size-2-3);
+}
+
+.infio-commands-market-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-1);
+}
+
+.infio-commands-market-name {
+  font-weight: var(--font-medium);
+  font-size: var(--font-ui-medium);
+  color: #f1c43f;
+  user-select: text;
+}
+
+.infio-commands-market-category {
+  background-color: #f1c43f;
+  color: #000000;
+  padding: 2px 8px;
+  border-radius: var(--radius-s);
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-start;
+	margin-top: var(--size-4-2);
+}
+
+.infio-commands-market-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+}
+
+.infio-commands-market-downloads {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.infio-commands-market-description {
+  color: #f1c43f;
+  margin-bottom: var(--size-2-3);
+  font-size: var(--font-ui-medium);
+  line-height: 1.8;
+  user-select: text;
+}
+
+.infio-commands-market-content {
+  font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+  margin-bottom: var(--size-4-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+	user-select: text;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.infio-commands-market-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--size-2-2);
+}
+
+.infio-commands-install-btn {
+  display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	color: var(--text-muted) !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	width: 24px !important;
+	height: 24px !important;
+  gap: var(--size-2-1);
+  cursor: pointer !important;
+  font-size: var(--font-ui-small) !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+
+	&:hover {
+		background-color: var(--interactive-accent) !important;
+		color: var(--text-on-accent) !important;
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
 }
