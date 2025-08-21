@@ -10,6 +10,9 @@ Infio Copilot 是一款可高度个人定制化的 Obsidian AI 插件，旨在�
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/felixduan)
 
+# Pro Version
+
+
 # 🚀 新版本发布：引入工作区、洞察与本地模型！
 
 我们很高兴地宣布一个重要更新，它将彻底改变您的知识管理体验。此版本引入了强大的新功能，如工作区、洞察、以及开箱即用的本地嵌入模型，让您更深入地与笔记互动。

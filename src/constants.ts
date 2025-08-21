@@ -24,6 +24,7 @@ export const ALIBABA_QWEN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-
 export const MOONSHOT_BASE_URL = 'https://api.moonshot.cn/v1'
 export const ZHIPUAI_BASE_URL = 'https://open.bigmodel.cn/api/paas/v4'
 export const INFIO_BASE_URL = 'https://api.infio.app'
+export const INFIO_PLATFORM_URL = 'https://platform.infio.app'
 export const JINA_BASE_URL = 'https://r.jina.ai'
 export const SERPER_BASE_URL = 'https://serpapi.com/search'
 // Pricing in dollars per million tokens
